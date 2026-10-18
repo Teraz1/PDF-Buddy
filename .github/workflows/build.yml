@@ -1,0 +1,19 @@
+name: Build apps
+on: workflow_dispatch
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt pyinstaller
+      - run: pyinstaller --windowed --onefile --name "PDF Buddy" pdf_buddy.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PDF-Buddy-${{ matrix.os }}
+          path: dist/*
